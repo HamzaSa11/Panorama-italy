@@ -43,7 +43,7 @@ app.use(rateLimit);
 app.use(cors());
 app.use(bodyParser.json({ limit: '10kb' }));
 app.use(bodyParser.urlencoded({ extended: true, limit: '10kb' }));
-app.use(express.static('Chams project'));
+app.use(express.static('Panorama'));
 
 const validateEmail = (email) => {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
