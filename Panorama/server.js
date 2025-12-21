@@ -15,31 +15,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// Rate Limiting (simple memory-based)
-const rateLimitStore = {};
-const RATE_LIMIT_WINDOW = 15 * 60 * 1000;
-const RATE_LIMIT_MAX_REQUESTS = 100;
-
-function rateLimit(req, res, next) {
-  const ip = req.ip;
-  const now = Date.now();
-  
-  if (!rateLimitStore[ip]) {
-    rateLimitStore[ip] = { count: 1, resetTime: now + RATE_LIMIT_WINDOW };
-  } else if (now > rateLimitStore[ip].resetTime) {
-    rateLimitStore[ip] = { count: 1, resetTime: now + RATE_LIMIT_WINDOW };
-  } else {
-    rateLimitStore[ip].count++;
-  }
-  
-  if (rateLimitStore[ip].count > RATE_LIMIT_MAX_REQUESTS) {
-    return res.status(429).json({ error: 'Too many requests. Please try again later.' });
-  }
-  
-  next();
-}
-
-app.use(rateLimit);
 app.use(cors());
 app.use(bodyParser.json({ limit: '10kb' }));
 app.use(bodyParser.urlencoded({ extended: true, limit: '10kb' }));
