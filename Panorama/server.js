@@ -113,7 +113,7 @@ app.get('/api/available-dates', (req, res) => {
 
 app.post('/api/admin-login', (req, res) => {
   const { username, password } = req.body;
-  if (username === 'admin' && password === 'admin') {
+  if (username === 'admin' && password === '.~%%;JY8LIQ0#4}]W8@£F:0m/0?^rIDy@n\t8qkQc](swQO~S0') {
     res.json({ success: true });
   } else {
     res.status(401).json({ error: 'Invalid credentials' });
