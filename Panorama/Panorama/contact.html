@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Contatti — PANORAMA</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <nav class="nav">
+    <div class="container nav-inner">
+      <a href="index.html" class="brand">
+        <img src="logo.png.jpeg" alt="PANORAMA logo" class="logo">
+        <span class="brand-name">PANORAMA</span>
+      </a>
+      <button id="burger3" class="burger" aria-label="menu">☰</button>
+      <ul class="nav-links" id="navLinks3">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="services.html">Servizi</a></li>
+        <li><a href="contact.html" class="active">Contatti</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="container">
+    <header class="section-header">
+      <h1>Contattaci</h1>
+      <p>Scrivi i tuoi dettagli e ti rispondiamo al più presto.</p>
+    </header>
+
+    <section class="contact-form card">
+      <form id="contactForm">
+        <label for="name">Nome</label>
+        <input id="name" name="name" type="text" required>
+
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" required>
+
+        <label for="phone">Telefono</label>
+        <input id="phone" name="phone" type="tel" required>
+
+        <label for="message">Messaggio</label>
+        <textarea id="message" name="message" rows="5" required></textarea>
+
+        <button type="submit" class="btn">Invia</button>
+        <p id="formMessage" class="form-message"></p>
+      </form>
+      <div class="contact-info">
+        <p><strong>Jamel Mosbah</strong></p>
+        <p>📞 380 471 2700</p>
+        <p>📧 jamelmosbah308@gmail.com</p>
+        <p>📍 Via C. Augusta 32/2 – 39100 Bolzano</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>© 2025 PANORAMA — Tutti i diritti riservati.</p>
+      <p class="footer-created">Created by <a href="https://www.facebook.com/share/1AfEMB7vru/" target="_blank" class="glary-link">Saoudi Hamza</a> and <a href="https://www.facebook.com/share/1SLD8pG56v/" target="_blank" class="glary-link">Zairi Chams Eddin</a></p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    document.getElementById('contactForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = {
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        message: document.getElementById('message').value
+      };
+
+      try {
+        const response = await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData)
+        });
+
+        const result = await response.json();
+        const messageEl = document.getElementById('formMessage');
+
+        if (response.ok) {
+          messageEl.textContent = '✓ Messaggio inviato! Ti contatteremo presto.';
+          messageEl.style.color = 'green';
+          document.getElementById('contactForm').reset();
+        } else {
+          messageEl.textContent = '✗ ' + result.error;
+          messageEl.style.color = 'red';
+        }
+      } catch (err) {
+        document.getElementById('formMessage').textContent = '✗ Errore di connessione';
+        document.getElementById('formMessage').style.color = 'red';
+      }
+    });
+  </script>
+</body>
+</html>

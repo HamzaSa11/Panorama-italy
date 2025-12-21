@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Messaggi - PANORAMA</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <nav class="nav">
+    <div class="container nav-inner">
+      <a href="index.html" class="brand">
+        <img src="logo.png.jpeg" alt="PANORAMA logo" class="logo">
+        <span class="brand-name">PANORAMA</span>
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="services.html">Servizi</a></li>
+        <li><a href="contact.html">Contatti</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div id="loginSection" class="container login-section">
+    <div class="card login-card">
+      <h2>Accesso Admin</h2>
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" required>
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" required>
+        </div>
+        <button type="submit" class="btn">Accedi</button>
+        <p id="loginMessage"></p>
+      </form>
+    </div>
+  </div>
+
+  <div id="dashboardSection" class="container dashboard-section" style="display: none;">
+    <div class="card">
+      <div class="dashboard-header">
+        <h2>Messaggi da Contatti</h2>
+        <button id="logoutBtn" class="btn-logout">Esci</button>
+      </div>
+      <table class="clients-table">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>Telefono</th>
+            <th>Messaggio</th>
+            <th>Data</th>
+            <th>Azione</th>
+          </tr>
+        </thead>
+        <tbody id="messagesBody">
+          <tr><td colspan="6" style="text-align: center;">Caricamento dati...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>© 2025 PANORAMA — Tutti i diritti riservati.</p>
+      <p class="footer-created">Created by <a href="https://www.facebook.com/share/1AfEMB7vru/" target="_blank" class="glary-link">Saoudi Hamza</a> and <a href="https://www.facebook.com/share/1SLD8pG56v/" target="_blank" class="glary-link">Zairi Chams Eddin</a></p>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      try {
+        const response = await fetch('/api/admin-login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+
+        if (response.ok) {
+          sessionStorage.setItem('adminLoggedIn', 'true');
+          document.getElementById('loginSection').style.display = 'none';
+          document.getElementById('dashboardSection').style.display = 'block';
+          loadMessages();
+        } else {
+          document.getElementById('loginMessage').textContent = 'Credenziali non valide';
+          document.getElementById('loginMessage').style.color = 'red';
+        }
+      } catch (err) {
+        document.getElementById('loginMessage').textContent = 'Errore di connessione';
+      }
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      sessionStorage.removeItem('adminLoggedIn');
+      document.getElementById('loginSection').style.display = 'block';
+      document.getElementById('dashboardSection').style.display = 'none';
+      document.getElementById('loginForm').reset();
+    });
+
+    async function loadMessages() {
+      try {
+        const response = await fetch('/api/admin/messages');
+        const data = await response.json();
+        const tbody = document.getElementById('messagesBody');
+        tbody.innerHTML = '';
+
+        if (data.messages.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Nessun messaggio</td></tr>';
+        } else {
+          data.messages.forEach(msg => {
+            const row = `
+              <tr>
+                <td>${msg.name}</td>
+                <td>${msg.email}</td>
+                <td>${msg.phone}</td>
+                <td style="max-width: 300px; word-break: break-word;">${msg.message}</td>
+                <td>${new Date(msg.created_at).toLocaleDateString('it-IT')}</td>
+                <td><button class="btn-delete" onclick="deleteMessage(${msg.id})">Elimina</button></td>
+              </tr>
+            `;
+            tbody.innerHTML += row;
+          });
+        }
+      } catch (err) {
+        document.getElementById('messagesBody').innerHTML = '<tr><td colspan="6" style="text-align: center; color: red;">Errore nel caricamento dati</td></tr>';
+      }
+    }
+
+    async function deleteMessage(id) {
+      if (!confirm('Sei sicuro di voler eliminare questo messaggio?')) return;
+      try {
+        const response = await fetch(`/api/admin/messages/${id}`, {
+          method: 'DELETE'
+        });
+        if (response.ok) {
+          loadMessages();
+        }
+      } catch (err) {
+        alert('Errore nell\'eliminazione');
+      }
+    }
+
+    if (sessionStorage.getItem('adminLoggedIn')) {
+      document.getElementById('loginSection').style.display = 'none';
+      document.getElementById('dashboardSection').style.display = 'block';
+      loadMessages();
+    }
+  </script>
+</body>
+</html>
