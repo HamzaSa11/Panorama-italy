@@ -1,236 +1,327 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="it">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Admin - PANORAMA</title>
-  <link rel="stylesheet" href="styles.css" />
-  <script async defer src="https://maps.googleapis.com/maps/api/js?loading=async"></script>
-  <style>
-    .clients-table { width: 100%; }
-    .location-btn { background-color: #17a2b8; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; }
-    .location-btn:hover { background-color: #138496; }
-    .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.4); }
-    .modal.show { display: block; }
-    .modal-content { background-color: #fefefe; margin: 5% auto; padding: 20px; border: 1px solid #888; width: 90%; max-width: 600px; border-radius: 8px; }
-    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-    .modal-header h3 { margin: 0; }
-    .close-btn { font-size: 28px; font-weight: bold; color: #aaa; cursor: pointer; }
-    .close-btn:hover { color: #000; }
-    #locationModal { width: 100%; height: 400px; border-radius: 8px; }
-  </style>
-</head>
-<body>
-  <nav class="nav">
-    <div class="container nav-inner">
-      <a href="index.html" class="brand">
-        <img src="logo.png.jpeg" alt="PANORAMA logo" class="logo">
-        <span class="brand-name">PANORAMA</span>
-      </a>
-      <ul class="nav-links" id="navLinks">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="services.html">Servizi</a></li>
-        <li><a href="contact.html">Contatti</a></li>
-      </ul>
-    </div>
-  </nav>
-
-  <div id="loginSection" class="container login-section">
-    <div class="card login-card">
-      <h2>Accesso Admin</h2>
-      <form id="loginForm">
-        <div class="form-group">
-          <label for="username">Username</label>
-          <input type="text" id="username" name="username" required>
-        </div>
-        <div class="form-group">
-          <label for="password">Password</label>
-          <input type="password" id="password" name="password" required>
-        </div>
-        <button type="submit" class="btn">Accedi</button>
-        <p id="loginMessage"></p>
-      </form>
-    </div>
-  </div>
-
-  <div id="dashboardSection" class="container dashboard-section" style="display: none;">
-    <div class="card">
-      <div class="dashboard-header">
-        <h2>Pannello Clienti</h2>
-        <div class="header-buttons">
-          <a href="messages.html" class="btn-messages">📧 Messaggi</a>
-          <button id="logoutBtn" class="btn-logout">Esci</button>
-        </div>
-      </div>
-      <table class="clients-table">
-        <thead>
-          <tr>
-            <th>Nome</th>
-            <th>Email</th>
-            <th>Telefono</th>
-            <th>Servizio</th>
-            <th>Data prenotazione</th>
-            <th>Luogo</th>
-            <th>Data registrazione</th>
-            <th>Azione</th>
-          </tr>
-        </thead>
-        <tbody id="clientsBody">
-          <tr><td colspan="8" style="text-align: center;">Caricamento dati...</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- Location Modal -->
-  <div id="locationMapModal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>Luogo della prenotazione</h3>
-        <span class="close-btn" onclick="closeLocationModal()">&times;</span>
-      </div>
-      <p id="clientNameDisplay" style="margin: 10px 0;"></p>
-      <div id="locationModal" style="width: 100%; height: 400px; border-radius: 8px;"></div>
-    </div>
-  </div>
-
-  <script>
-    let currentLocationMap = null;
-
-    function closeLocationModal() {
-      document.getElementById('locationMapModal').classList.remove('show');
-    }
-
-    function showLocationOnMap(lat, lng, clientName) {
-      document.getElementById('clientNameDisplay').textContent = `Cliente: ${clientName}`;
-      document.getElementById('locationMapModal').classList.add('show');
-      
-      setTimeout(() => {
-        if (currentLocationMap) {
-          currentLocationMap.setCenter({ lat, lng });
-          currentLocationMap.setZoom(15);
-          // Clear old markers
-          document.querySelectorAll('[role="button"][aria-label*="marker"]').forEach(el => el.remove());
-        } else {
-          currentLocationMap = new google.maps.Map(document.getElementById('locationModal'), {
-            zoom: 15,
-            center: { lat, lng }
-          });
-        }
-        
-        new google.maps.Marker({
-          position: { lat, lng },
-          map: currentLocationMap,
-          title: `Prenotazione per ${clientName}`
-        });
-      }, 100);
-    }
-
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const username = document.getElementById('username').value;
-      const password = document.getElementById('password').value;
-
-      try {
-        const response = await fetch('/api/admin-login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, password })
-        });
-
-        if (response.ok) {
-          sessionStorage.setItem('adminLoggedIn', 'true');
-          document.getElementById('loginSection').style.display = 'none';
-          document.getElementById('dashboardSection').style.display = 'block';
-          loadClients();
-        } else {
-          document.getElementById('loginMessage').textContent = 'Credenziali non valide';
-          document.getElementById('loginMessage').style.color = 'red';
-        }
-      } catch (err) {
-        document.getElementById('loginMessage').textContent = 'Errore di connessione';
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Admin - PANORAMA</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script
+      async
+      defer
+      src="https://maps.googleapis.com/maps/api/js?loading=async"
+    ></script>
+    <style>
+      .clients-table {
+        width: 100%;
       }
-    });
+      .location-btn {
+        background-color: #17a2b8;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .location-btn:hover {
+        background-color: #138496;
+      }
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.4);
+      }
+      .modal.show {
+        display: block;
+      }
+      .modal-content {
+        background-color: #fefefe;
+        margin: 5% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 90%;
+        max-width: 600px;
+        border-radius: 8px;
+      }
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+      .modal-header h3 {
+        margin: 0;
+      }
+      .close-btn {
+        font-size: 28px;
+        font-weight: bold;
+        color: #aaa;
+        cursor: pointer;
+      }
+      .close-btn:hover {
+        color: #000;
+      }
+      #locationModal {
+        width: 100%;
+        height: 400px;
+        border-radius: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="nav">
+      <div class="container nav-inner">
+        <a href="index.html" class="brand">
+          <img src="logo.png.jpeg" alt="PANORAMA logo" class="logo" />
+          <span class="brand-name">PANORAMA</span>
+        </a>
+        <ul class="nav-links" id="navLinks">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="services.html">Servizi</a></li>
+          <li><a href="contact.html">Contatti</a></li>
+        </ul>
+      </div>
+    </nav>
 
-    document.getElementById('logoutBtn').addEventListener('click', () => {
-      sessionStorage.removeItem('adminLoggedIn');
-      document.getElementById('loginSection').style.display = 'block';
-      document.getElementById('dashboardSection').style.display = 'none';
-      document.getElementById('loginForm').reset();
-    });
+    <div id="loginSection" class="container login-section">
+      <div class="card login-card">
+        <h2>Accesso Admin</h2>
+        <form id="loginForm">
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required />
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required />
+          </div>
+          <button type="submit" class="btn">Accedi</button>
+          <p id="loginMessage"></p>
+        </form>
+      </div>
+    </div>
 
-    async function loadClients() {
-      try {
-        const response = await fetch('/api/admin/clients');
-        const data = await response.json();
-        const tbody = document.getElementById('clientsBody');
-        tbody.innerHTML = '';
+    <div
+      id="dashboardSection"
+      class="container dashboard-section"
+      style="display: none"
+    >
+      <div class="card">
+        <div class="dashboard-header">
+          <h2>Pannello Clienti</h2>
+          <div class="header-buttons">
+            <a href="messages.html" class="btn-messages">📧 Messaggi</a>
+            <button id="logoutBtn" class="btn-logout">Esci</button>
+          </div>
+        </div>
+        <table class="clients-table">
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Email</th>
+              <th>Telefono</th>
+              <th>Servizio</th>
+              <th>Data prenotazione</th>
+              <th>Luogo</th>
+              <th>Data registrazione</th>
+              <th>Azione</th>
+            </tr>
+          </thead>
+          <tbody id="clientsBody">
+            <tr>
+              <td colspan="8" style="text-align: center">
+                Caricamento dati...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
 
-        if (data.clients.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="8" style="text-align: center;">Nessun cliente registrato</td></tr>';
-        } else {
-          data.clients.forEach(client => {
-            const hasLocation = client.locationLat && client.locationLng;
-            const locationBtn = hasLocation 
-              ? `<button class="location-btn" onclick="showLocationOnMap(${client.locationLat}, ${client.locationLng}, '${client.name}')">📍 Vedi mappa</button>`
-              : '<span style="color: #999;">—</span>';
-            
-            const row = `
+    <!-- Location Modal -->
+    <div id="locationMapModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Luogo della prenotazione</h3>
+          <span class="close-btn" onclick="closeLocationModal()">&times;</span>
+        </div>
+        <p id="clientNameDisplay" style="margin: 10px 0"></p>
+        <div
+          id="locationModal"
+          style="width: 100%; height: 400px; border-radius: 8px"
+        ></div>
+      </div>
+    </div>
+
+    <script>
+      let currentLocationMap = null;
+
+      function closeLocationModal() {
+        document.getElementById("locationMapModal").classList.remove("show");
+      }
+
+      function showLocationOnMap(lat, lng, clientName) {
+        document.getElementById("clientNameDisplay").textContent =
+          `Cliente: ${clientName}`;
+        document.getElementById("locationMapModal").classList.add("show");
+
+        setTimeout(() => {
+          if (currentLocationMap) {
+            currentLocationMap.setCenter({ lat, lng });
+            currentLocationMap.setZoom(15);
+            // Clear old markers
+            document
+              .querySelectorAll('[role="button"][aria-label*="marker"]')
+              .forEach((el) => el.remove());
+          } else {
+            currentLocationMap = new google.maps.Map(
+              document.getElementById("locationModal"),
+              {
+                zoom: 15,
+                center: { lat, lng },
+              },
+            );
+          }
+
+          new google.maps.Marker({
+            position: { lat, lng },
+            map: currentLocationMap,
+            title: `Prenotazione per ${clientName}`,
+          });
+        }, 100);
+      }
+
+      document
+        .getElementById("loginForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const username = document.getElementById("username").value;
+          const password = document.getElementById("password").value;
+
+          try {
+            const response = await fetch("/api/admin-login", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ username, password }),
+            });
+
+            if (response.ok) {
+              sessionStorage.setItem("adminLoggedIn", "true");
+              document.getElementById("loginSection").style.display = "none";
+              document.getElementById("dashboardSection").style.display =
+                "block";
+              loadClients();
+            } else {
+              document.getElementById("loginMessage").textContent =
+                "Credenziali non valide";
+              document.getElementById("loginMessage").style.color = "red";
+            }
+          } catch (err) {
+            document.getElementById("loginMessage").textContent =
+              "Errore di connessione";
+          }
+        });
+
+      document.getElementById("logoutBtn").addEventListener("click", () => {
+        sessionStorage.removeItem("adminLoggedIn");
+        document.getElementById("loginSection").style.display = "block";
+        document.getElementById("dashboardSection").style.display = "none";
+        document.getElementById("loginForm").reset();
+      });
+
+      async function loadClients() {
+        try {
+          const response = await fetch("/api/admin/clients");
+          const data = await response.json();
+          const tbody = document.getElementById("clientsBody");
+          tbody.innerHTML = "";
+
+          if (data.clients.length === 0) {
+            tbody.innerHTML =
+              '<tr><td colspan="8" style="text-align: center;">Nessun cliente registrato</td></tr>';
+          } else {
+            data.clients.forEach((client) => {
+              const hasLocation = client.locationLat && client.locationLng;
+              const locationBtn = hasLocation
+                ? `<button class="location-btn" onclick="showLocationOnMap(${client.locationLat}, ${client.locationLng}, '${client.name}')">📍 Vedi mappa</button>`
+                : '<span style="color: #999;">—</span>';
+
+              const row = `
               <tr>
                 <td>${client.name}</td>
                 <td>${client.email}</td>
                 <td>${client.phone}</td>
                 <td>${client.service}</td>
-                <td>${new Date(client.date).toLocaleDateString('it-IT')}</td>
+                <td>${new Date(client.date).toLocaleDateString("it-IT")}</td>
                 <td>${locationBtn}</td>
-                <td>${new Date(client.created_at).toLocaleDateString('it-IT')}</td>
+                <td>${new Date(client.created_at).toLocaleDateString("it-IT")}</td>
                 <td><button class="btn-delete" data-client-id="${client.id}">Elimina</button></td>
               </tr>
             `;
-            tbody.innerHTML += row;
+              tbody.innerHTML += row;
+            });
+          }
+
+          // Add event listeners to delete buttons
+          document.querySelectorAll(".btn-delete").forEach((btn) => {
+            btn.addEventListener("click", () => {
+              const clientId = btn.getAttribute("data-client-id");
+              deleteClient(clientId);
+            });
           });
+        } catch (err) {
+          document.getElementById("clientsBody").innerHTML =
+            '<tr><td colspan="8" style="text-align: center; color: red;">Errore nel caricamento dati</td></tr>';
         }
-        
-        // Add event listeners to delete buttons
-        document.querySelectorAll('.btn-delete').forEach(btn => {
-          btn.addEventListener('click', () => {
-            const clientId = btn.getAttribute('data-client-id');
-            deleteClient(clientId);
+      }
+
+      async function deleteClient(id) {
+        if (!confirm("Sei sicuro di voler eliminare questo cliente?")) return;
+        try {
+          const response = await fetch(`/api/admin/clients/${id}`, {
+            method: "DELETE",
           });
-        });
-      } catch (err) {
-        document.getElementById('clientsBody').innerHTML = '<tr><td colspan="8" style="text-align: center; color: red;">Errore nel caricamento dati</td></tr>';
-      }
-    }
-
-    async function deleteClient(id) {
-      if (!confirm('Sei sicuro di voler eliminare questo cliente?')) return;
-      try {
-        const response = await fetch(`/api/admin/clients/${id}`, {
-          method: 'DELETE'
-        });
-        if (response.ok) {
-          loadClients();
-        } else {
-          alert('Errore nell\'eliminazione');
+          if (response.ok) {
+            loadClients();
+          } else {
+            alert("Errore nell'eliminazione");
+          }
+        } catch (err) {
+          alert("Errore nell'eliminazione");
         }
-      } catch (err) {
-        alert('Errore nell\'eliminazione');
       }
-    }
 
-    if (sessionStorage.getItem('adminLoggedIn')) {
-      document.getElementById('loginSection').style.display = 'none';
-      document.getElementById('dashboardSection').style.display = 'block';
-      loadClients();
-    }
-  </script>
+      if (sessionStorage.getItem("adminLoggedIn")) {
+        document.getElementById("loginSection").style.display = "none";
+        document.getElementById("dashboardSection").style.display = "block";
+        loadClients();
+      }
+    </script>
 
-  <footer class="site-footer">
-    <div class="container">
-      <p>© 2025 PANORAMA — Tutti i diritti riservati.</p>
-      <p class="footer-created">Created by <a href="https://www.instagram.com/hstheassassin1?igsh=ZXVrZ2Z4aWIxeWF2" target="_blank" class="glary-link">Saoudi Hamza</a> and <a href="https://www.instagram.com/chams_eddine_z?igsh=OGgxZnltamM1eHN4" target="_blank" class="glary-link">Zairi Chams Eddin</a></p>
-    </div>
-  </footer>
-</body>
+    <footer class="site-footer">
+      <div class="container">
+        <p>© 2026 PANORAMA — Tutti i diritti riservati.</p>
+        <p class="footer-created">
+          Created by
+          <a
+            href="https://www.instagram.com/hstheassassin1?igsh=ZXVrZ2Z4aWIxeWF2"
+            target="_blank"
+            class="glary-link"
+            >Saoudi Hamza</a
+          >
+          and
+          <a
+            href="https://www.instagram.com/chams_eddine_z?igsh=OGgxZnltamM1eHN4"
+            target="_blank"
+            class="glary-link"
+            >Zairi Chams Eddin</a
+          >
+        </p>
+      </div>
+    </footer>
+  </body>
 </html>
