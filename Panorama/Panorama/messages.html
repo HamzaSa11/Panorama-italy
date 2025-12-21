@@ -122,12 +122,20 @@
                 <td>${msg.phone}</td>
                 <td style="max-width: 300px; word-break: break-word;">${msg.message}</td>
                 <td>${new Date(msg.created_at).toLocaleDateString('it-IT')}</td>
-                <td><button class="btn-delete" onclick="deleteMessage(${msg.id})">Elimina</button></td>
+                <td><button class="btn-delete" data-message-id="${msg.id}">Elimina</button></td>
               </tr>
             `;
             tbody.innerHTML += row;
           });
         }
+        
+        // Add event listeners to delete buttons
+        document.querySelectorAll('.btn-delete').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const messageId = btn.getAttribute('data-message-id');
+            deleteMessage(messageId);
+          });
+        });
       } catch (err) {
         document.getElementById('messagesBody').innerHTML = '<tr><td colspan="6" style="text-align: center; color: red;">Errore nel caricamento dati</td></tr>';
       }
