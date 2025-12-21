@@ -184,12 +184,20 @@
                 <td>${new Date(client.date).toLocaleDateString('it-IT')}</td>
                 <td>${locationBtn}</td>
                 <td>${new Date(client.created_at).toLocaleDateString('it-IT')}</td>
-                <td><button class="btn-delete" onclick="deleteClient(${client.id})">Elimina</button></td>
+                <td><button class="btn-delete" data-client-id="${client.id}">Elimina</button></td>
               </tr>
             `;
             tbody.innerHTML += row;
           });
         }
+        
+        // Add event listeners to delete buttons
+        document.querySelectorAll('.btn-delete').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const clientId = btn.getAttribute('data-client-id');
+            deleteClient(clientId);
+          });
+        });
       } catch (err) {
         document.getElementById('clientsBody').innerHTML = '<tr><td colspan="8" style="text-align: center; color: red;">Errore nel caricamento dati</td></tr>';
       }
