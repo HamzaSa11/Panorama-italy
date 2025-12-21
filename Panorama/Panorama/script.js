@@ -1,29 +1,3 @@
-// Secret admin reveal - press 'A' three times quickly
-let adminKeyPresses = [];
-const ADMIN_KEY_CODE = 'a';
-const ADMIN_KEY_TIMEOUT = 1000; // 1 second between presses
-const ADMIN_PRESSES_NEEDED = 3;
-
-document.addEventListener('keydown', (e) => {
-  if (e.key.toLowerCase() === ADMIN_KEY_CODE) {
-    const now = Date.now();
-    
-    // Clear old presses if timeout exceeded
-    adminKeyPresses = adminKeyPresses.filter(time => now - time < ADMIN_KEY_TIMEOUT);
-    adminKeyPresses.push(now);
-    
-    // Check if admin revealed
-    if (adminKeyPresses.length >= ADMIN_PRESSES_NEEDED) {
-      const adminLink = document.getElementById('adminLink');
-      if (adminLink) {
-        adminLink.style.display = 'block';
-        adminLink.style.animation = 'fadeIn 0.3s ease-in';
-        adminKeyPresses = [];
-      }
-    }
-  }
-});
-
 const burger = document.getElementById('burger');
 if (burger) {
   burger.addEventListener('click', () => {
