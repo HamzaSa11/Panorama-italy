@@ -1,129 +1,185 @@
-const fs = require('fs');
-const path = require('path');
+const { Pool } = require('pg');
+const { v4: uuidv4 } = require('uuid');
+require('dotenv').config();
 
-const DATA_DIR = path.join(__dirname, 'data');
-const BOOKINGS_FILE = path.join(DATA_DIR, 'bookings.json');
-const MESSAGES_FILE = path.join(DATA_DIR, 'messages.json');
+// PostgreSQL Connection Pool
+const pool = new Pool({
+  user: process.env.DB_USER || 'postgres',
+  password: process.env.DB_PASSWORD || 'password',
+  host: process.env.DB_HOST || 'localhost',
+  port: process.env.DB_PORT || 5432,
+  database: process.env.DB_NAME || 'panorama_db'
+});
 
-// Initialize data directory and files
-function initialize() {
-  if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
-  }
-
-  if (!fs.existsSync(BOOKINGS_FILE)) {
-    fs.writeFileSync(BOOKINGS_FILE, JSON.stringify([]), 'utf-8');
-  }
-
-  if (!fs.existsSync(MESSAGES_FILE)) {
-    fs.writeFileSync(MESSAGES_FILE, JSON.stringify([]), 'utf-8');
-  }
-}
-
-// Read data from file
-function readFile(filePath) {
+// Initialize database tables
+async function initialize() {
   try {
-    const data = fs.readFileSync(filePath, 'utf-8');
-    return JSON.parse(data) || [];
+    // Create bookings table
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS bookings (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        name VARCHAR(255) NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        phone VARCHAR(20) NOT NULL,
+        service VARCHAR(255) NOT NULL,
+        date DATE NOT NULL,
+        location_lat DECIMAL(10, 8) NOT NULL,
+        location_lng DECIMAL(11, 8) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
+    // Create messages table
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS messages (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        name VARCHAR(255) NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        phone VARCHAR(20) NOT NULL,
+        message TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
+    console.log('Database tables initialized successfully');
   } catch (err) {
-    return [];
+    console.error('Error initializing database:', err);
+    throw err;
   }
-}
-
-// Write data to file
-function writeFile(filePath, data) {
-  fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8');
-}
-
-// Generate unique ID
-function generateId() {
-  return Date.now() + Math.random().toString(36).substr(2, 9);
 }
 
 // ===== BOOKINGS =====
 const bookings = {
-  getAll: () => {
-    return readFile(BOOKINGS_FILE);
+  getAll: async () => {
+    try {
+      const result = await pool.query(
+        'SELECT * FROM bookings ORDER BY date ASC'
+      );
+      return result.rows;
+    } catch (err) {
+      console.error('Error getting all bookings:', err);
+      throw err;
+    }
   },
 
-  add: (name, email, phone, service, date, locationLat, locationLng) => {
-    const all = readFile(BOOKINGS_FILE);
-    const newBooking = {
-      id: generateId(),
-      name,
-      email,
-      phone,
-      service,
-      date,
-      locationLat,
-      locationLng,
-      created_at: new Date().toISOString()
-    };
-    all.push(newBooking);
-    writeFile(BOOKINGS_FILE, all);
-    return newBooking;
+  add: async (name, email, phone, service, date, locationLat, locationLng) => {
+    try {
+      const id = uuidv4();
+      const result = await pool.query(
+        `INSERT INTO bookings (id, name, email, phone, service, date, location_lat, location_lng)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+         RETURNING *`,
+        [id, name, email, phone, service, date, locationLat, locationLng]
+      );
+      return result.rows[0];
+    } catch (err) {
+      console.error('Error adding booking:', err);
+      throw err;
+    }
   },
 
-  getById: (id) => {
-    const all = readFile(BOOKINGS_FILE);
-    return all.find(b => String(b.id) === String(id));
+  getById: async (id) => {
+    try {
+      const result = await pool.query(
+        'SELECT * FROM bookings WHERE id = $1',
+        [id]
+      );
+      return result.rows[0] || null;
+    } catch (err) {
+      console.error('Error getting booking by id:', err);
+      throw err;
+    }
   },
 
-  delete: (id) => {
-    const all = readFile(BOOKINGS_FILE);
-    const index = all.findIndex(b => String(b.id) === String(id));
-    if (index === -1) return null;
-    const deleted = all[index];
-    all.splice(index, 1);
-    writeFile(BOOKINGS_FILE, all);
-    return deleted;
+  delete: async (id) => {
+    try {
+      const result = await pool.query(
+        'DELETE FROM bookings WHERE id = $1 RETURNING *',
+        [id]
+      );
+      return result.rows[0] || null;
+    } catch (err) {
+      console.error('Error deleting booking:', err);
+      throw err;
+    }
   },
 
-  getBookedDates: () => {
-    const all = readFile(BOOKINGS_FILE);
-    return all.map(b => b.date);
+  getBookedDates: async () => {
+    try {
+      const result = await pool.query(
+        'SELECT DISTINCT date FROM bookings ORDER BY date ASC'
+      );
+      return result.rows.map(row => row.date);
+    } catch (err) {
+      console.error('Error getting booked dates:', err);
+      throw err;
+    }
   }
 };
 
 // ===== MESSAGES =====
 const messages = {
-  getAll: () => {
-    const all = readFile(MESSAGES_FILE);
-    return all.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  getAll: async () => {
+    try {
+      const result = await pool.query(
+        'SELECT * FROM messages ORDER BY created_at DESC'
+      );
+      return result.rows;
+    } catch (err) {
+      console.error('Error getting all messages:', err);
+      throw err;
+    }
   },
 
-  add: (name, email, phone, message) => {
-    const all = readFile(MESSAGES_FILE);
-    const newMessage = {
-      id: generateId(),
-      name,
-      email,
-      phone,
-      message,
-      created_at: new Date().toISOString()
-    };
-    all.push(newMessage);
-    writeFile(MESSAGES_FILE, all);
-    return newMessage;
+  add: async (name, email, phone, message) => {
+    try {
+      const id = uuidv4();
+      const result = await pool.query(
+        `INSERT INTO messages (id, name, email, phone, message)
+         VALUES ($1, $2, $3, $4, $5)
+         RETURNING *`,
+        [id, name, email, phone, message]
+      );
+      return result.rows[0];
+    } catch (err) {
+      console.error('Error adding message:', err);
+      throw err;
+    }
   },
 
-  getById: (id) => {
-    const all = readFile(MESSAGES_FILE);
-    return all.find(m => String(m.id) === String(id));
+  getById: async (id) => {
+    try {
+      const result = await pool.query(
+        'SELECT * FROM messages WHERE id = $1',
+        [id]
+      );
+      return result.rows[0] || null;
+    } catch (err) {
+      console.error('Error getting message by id:', err);
+      throw err;
+    }
   },
 
-  delete: (id) => {
-    const all = readFile(MESSAGES_FILE);
-    const index = all.findIndex(m => String(m.id) === String(id));
-    if (index === -1) return null;
-    const deleted = all[index];
-    all.splice(index, 1);
-    writeFile(MESSAGES_FILE, all);
-    return deleted;
+  delete: async (id) => {
+    try {
+      const result = await pool.query(
+        'DELETE FROM messages WHERE id = $1 RETURNING *',
+        [id]
+      );
+      return result.rows[0] || null;
+    } catch (err) {
+      console.error('Error deleting message:', err);
+      throw err;
+    }
   }
 };
 
 // Initialize on load
-initialize();
+initialize().catch(err => {
+  console.error('Failed to initialize database:', err);
+  process.exit(1);
+});
 
-module.exports = { bookings, messages };
+module.exports = { bookings, messages, pool };
