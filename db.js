@@ -181,10 +181,10 @@ const messages = {
   }
 };
 
-// Initialize on load
+// Initialize on load (non-blocking)
 initialize().catch(err => {
-  console.error('Failed to initialize database:', err);
-  process.exit(1);
+  console.warn('Warning: Database initialization failed:', err.message);
+  console.warn('Some features may not work until database is available.');
 });
 
 module.exports = { bookings, messages, pool };
