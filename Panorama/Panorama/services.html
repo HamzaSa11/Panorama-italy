@@ -7,12 +7,15 @@
     <link rel="stylesheet" href="styles.css" />
     <style>
       .service.card {
-        aspect-ratio: 4 / 3;          /* Keeps consistent shape */
+        width: 100%;
+        max-width: 700px;             /* Wider cards */
+        height: 320px;                /* Rectangular shape */
+        margin: 0 auto 2rem;          /* Center and space cards */
         background-size: contain;     /* Show full image without cropping */
         background-position: center;  /* Center the image */
         background-repeat: no-repeat; /* Prevent tiling */
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border-radius: 20px;          /* Smooth corners */
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1); /* Soft shadow */
       }
 
       .visually-hidden {
