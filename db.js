@@ -4,21 +4,37 @@ require('dotenv').config();
 
 // PostgreSQL Connection Pool
 // Support both Railway's DATABASE_URL and individual connection parameters
-const pool = new Pool(
-  process.env.DATABASE_URL
-    ? { connectionString: process.env.DATABASE_URL }
-    : {
-        user: process.env.DB_USER || 'postgres',
-        password: process.env.DB_PASSWORD || 'password',
-        host: process.env.DB_HOST || 'localhost',
-        port: process.env.DB_PORT || 5432,
-        database: process.env.DB_NAME || 'panorama_db'
-      }
-);
+const poolConfig = process.env.DATABASE_URL
+  ? { connectionString: process.env.DATABASE_URL }
+  : {
+      user: process.env.DB_USER || 'postgres',
+      password: process.env.DB_PASSWORD || 'password',
+      host: process.env.DB_HOST || 'localhost',
+      port: process.env.DB_PORT || 5432,
+      database: process.env.DB_NAME || 'panorama_db'
+    };
+
+console.log('[DB] Connecting to PostgreSQL...');
+console.log('[DB] Using DATABASE_URL:', !!process.env.DATABASE_URL);
+if (!process.env.DATABASE_URL) {
+  console.log('[DB] Using individual params: host=' + poolConfig.host + ', port=' + poolConfig.port + ', database=' + poolConfig.database);
+}
+
+const pool = new Pool(poolConfig);
+
+pool.on('error', (err) => {
+  console.error('[DB] Unexpected error on idle client:', err);
+});
+
+pool.on('connect', () => {
+  console.log('[DB] Pool connected successfully');
+});
 
 // Initialize database tables
 async function initialize() {
   try {
+    console.log('[DB] Initializing database tables...');
+    
     // Create bookings table
     await pool.query(`
       CREATE TABLE IF NOT EXISTS bookings (
@@ -34,6 +50,7 @@ async function initialize() {
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
+    console.log('[DB] Bookings table created/verified');
 
     // Create messages table
     await pool.query(`
@@ -47,10 +64,10 @@ async function initialize() {
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
-
-    console.log('Database tables initialized successfully');
+    console.log('[DB] Messages table created/verified');
+    console.log('[DB] Database initialization complete');
   } catch (err) {
-    console.error('Error initializing database:', err);
+    console.error('[DB] Error initializing database:', err.message);
     throw err;
   }
 }
@@ -118,7 +135,7 @@ const bookings = {
       );
       return result.rows.map(row => row.date);
     } catch (err) {
-      console.error('Error getting booked dates:', err);
+      console.error('[DB] Error getting booked dates:', err.message);
       throw err;
     }
   }
