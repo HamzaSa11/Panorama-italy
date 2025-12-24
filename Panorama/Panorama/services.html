@@ -5,6 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Servizi — PANORAMA</title>
     <link rel="stylesheet" href="styles.css" />
+    <style>
+      .service.card {
+        aspect-ratio: 4 / 3;          /* Keeps consistent shape */
+        background-size: contain;     /* Show full image without cropping */
+        background-position: center;  /* Center the image */
+        background-repeat: no-repeat; /* Prevent tiling */
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .visually-hidden {
+        opacity: 0;                   /* Hide text visually */
+        position: absolute;           /* Keep accessible for screen readers */
+        left: -9999px;
+      }
+    </style>
   </head>
   <body>
     <nav class="nav">
@@ -29,38 +45,24 @@
       </header>
 
       <section class="services-list">
-        <article class="service card" style="background-image: url('azias.jpeg'); 
-                background-size: contain; 
-                background-position: center; 
-                background-repeat: no-repeat;"> 
-          <h3 style="opacity: 0;">Pulizie aziendali</h3>
-          <p style="opacity: 0;">
-            Servizi programmati per uffici, magazzini e strutture commerciali.
-          </p>
+        <article class="service card" style="background-image: url('azias.jpeg');">
+          <h3 class="visually-hidden">Pulizie aziendali</h3>
+          <p class="visually-hidden">Servizi programmati per uffici, magazzini e strutture commerciali.</p>
         </article>
 
-        <article class="service card" style="background-image: url('privates.jpeg'); 
-                background-size: contain; 
-                background-position: center; 
-                background-repeat: no-repeat;">
-         <h3 style="opacity: 0;">Pulizie private</h3>
-          <p style="opacity: 0;">Pulizie domestiche accurate e su misura per la tua casa.</p>
+        <article class="service card" style="background-image: url('privates.jpeg');">
+          <h3 class="visually-hidden">Pulizie private</h3>
+          <p class="visually-hidden">Pulizie domestiche accurate e su misura per la tua casa.</p>
         </article>
 
-        <article class="service card" style="background-image: url('sagamberos.jpeg'); 
-                background-size: contain; 
-                background-position: center; 
-                background-repeat: no-repeat;">
-          <h3 style="opacity: 0;">Sgombero cantine</h3>
-          <p style="opacity: 0;">Rimozione rifiuti e smaltimento responsabile.</p>
+        <article class="service card" style="background-image: url('sagamberos.jpeg');">
+          <h3 class="visually-hidden">Sgombero cantine</h3>
+          <p class="visually-hidden">Rimozione rifiuti e smaltimento responsabile.</p>
         </article>
 
-        <article class="service card" style="background-image: url('vertratres.jpeg'); 
-                background-size: contain; 
-                background-position: center; 
-                background-repeat: no-repeat;">
-          <h3 style="opacity: 0;">Pulizia vetrate</h3>
-          <p style="opacity: 0;">Vetrate e facciate pulite per una migliore immagine aziendale.</p>
+        <article class="service card" style="background-image: url('vertratres.jpeg');">
+          <h3 class="visually-hidden">Pulizia vetrate</h3>
+          <p class="visually-hidden">Vetrate e facciate pulite per una migliore immagine aziendale.</p>
         </article>
       </section>
     </main>
@@ -70,19 +72,11 @@
         <p>© 2026 PANORAMA — Tutti i diritti riservati.</p>
         <p class="footer-created">
           Created by
-          <a
-            href="https://www.instagram.com/hstheassassin1?igsh=ZXVrZ2Z4aWIxeWF2"
-            target="_blank"
-            class="glary-link"
-            >HZ</a
-          >
+          <a href="https://www.instagram.com/hstheassassin1?igsh=ZXVrZ2Z4aWIxeWF2"
+             target="_blank" class="glary-link">HZ</a>
           and
-          <a
-            href="https://www.instagram.com/chams_eddine_z?igsh=OGgxZnltamM1eHN4"
-            target="_blank"
-            class="glary-link"
-            >CZ</a
-          >
+          <a href="https://www.instagram.com/chams_eddine_z?igsh=OGgxZnltamM1eHN4"
+             target="_blank" class="glary-link">CZ</a>
         </p>
       </div>
     </footer>
