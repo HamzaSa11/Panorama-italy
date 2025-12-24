@@ -8,19 +8,21 @@
     <style>
       .service.card {
         width: 100%;
-        max-width: 700px;             /* Wider cards */
-        height: 320px;                /* Rectangular shape */
-        margin: 0 auto 2rem;          /* Center and space cards */
-        background-size: contain;     /* Show full image without cropping */
-        background-position: center;  /* Center the image */
-        background-repeat: no-repeat; /* Prevent tiling */
-        border-radius: 20px;          /* Smooth corners */
-        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1); /* Soft shadow */
+        max-width: 700px;
+        height: 320px;
+        margin: 0 auto 2rem;
+        background-size: cover;     /* ✅ FIXED: Ensures full fill without distortion */
+        background-position: center; /* ✅ FIXED: Centers image in card */
+        background-repeat: no-repeat;
+        border-radius: 20px;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
       }
 
+      /* ✅ REMOVED: visually-hidden class is not needed for image display */
+      /* If you still want to hide text, keep this — but it's unrelated to image smoothing */
       .visually-hidden {
-        opacity: 0;                   /* Hide text visually */
-        position: absolute;           /* Keep accessible for screen readers */
+        opacity: 0;
+        position: absolute;
         left: -9999px;
       }
     </style>
@@ -75,10 +77,10 @@
         <p>© 2026 PANORAMA — Tutti i diritti riservati.</p>
         <p class="footer-created">
           Created by
-          <a href="https://www.instagram.com/hstheassassin1?igsh=ZXVrZ2Z4aWIxeWF2"
+          <a href="https://www.instagram.com/hstheassassin1?igsh=ZXVrZ2Z4aWIxeWF2  "
              target="_blank" class="glary-link">HZ</a>
           and
-          <a href="https://www.instagram.com/chams_eddine_z?igsh=OGgxZnltamM1eHN4"
+          <a href="https://www.instagram.com/chams_eddine_z?igsh=OGgxZnltamM1eHN4  "
              target="_blank" class="glary-link">CZ</a>
         </p>
       </div>
