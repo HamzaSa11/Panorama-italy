@@ -19,7 +19,7 @@ app.use((req, res, next) => {
 app.use(cors());
 app.use(bodyParser.json({ limit: '10kb' }));
 app.use(bodyParser.urlencoded({ extended: true, limit: '10kb' }));
-app.use(express.static('Panorama'));
+app.use(express.static('Panorama/Panorama'));
 
 const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 const validatePhone = (phone) => /^[0-9\s\-\+\(\)]{8,}$/.test(phone);
