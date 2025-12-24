@@ -22,7 +22,7 @@ async function initialize() {
     // Create bookings table
     await pool.query(`
       CREATE TABLE IF NOT EXISTS bookings (
-        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        id UUID PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
         email VARCHAR(255) NOT NULL,
         phone VARCHAR(20) NOT NULL,
@@ -38,7 +38,7 @@ async function initialize() {
     // Create messages table
     await pool.query(`
       CREATE TABLE IF NOT EXISTS messages (
-        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        id UUID PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
         email VARCHAR(255) NOT NULL,
         phone VARCHAR(20) NOT NULL,
