@@ -3,13 +3,18 @@ const { v4: uuidv4 } = require('uuid');
 require('dotenv').config();
 
 // PostgreSQL Connection Pool
-const pool = new Pool({
-  user: process.env.DB_USER || 'postgres',
-  password: process.env.DB_PASSWORD || 'password',
-  host: process.env.DB_HOST || 'localhost',
-  port: process.env.DB_PORT || 5432,
-  database: process.env.DB_NAME || 'panorama_db'
-});
+// Support both Railway's DATABASE_URL and individual connection parameters
+const pool = new Pool(
+  process.env.DATABASE_URL
+    ? { connectionString: process.env.DATABASE_URL }
+    : {
+        user: process.env.DB_USER || 'postgres',
+        password: process.env.DB_PASSWORD || 'password',
+        host: process.env.DB_HOST || 'localhost',
+        port: process.env.DB_PORT || 5432,
+        database: process.env.DB_NAME || 'panorama_db'
+      }
+);
 
 // Initialize database tables
 async function initialize() {
