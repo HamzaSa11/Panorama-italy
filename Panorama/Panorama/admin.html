@@ -245,10 +245,10 @@
               '<tr><td colspan="8" style="text-align: center;">Nessun cliente registrato</td></tr>';
           } else {
             data.clients.forEach((client) => {
-              const hasLocation = client.locationLat && client.locationLng;
-              const locationBtn = hasLocation
-                ? `<button class="location-btn" onclick="showLocationOnMap(${client.locationLat}, ${client.locationLng}, '${client.name}')">📍 Vedi mappa</button>`
-                : '<span style="color: #999;">—</span>';
+              // ✅ CHANGED: Show lat, lng directly instead of button
+              const locationDisplay = client.locationLat && client.locationLng
+                ? `${client.locationLat.toFixed(6)}, ${client.locationLng.toFixed(6)}`
+                : "—";
 
               const row = `
               <tr>
@@ -257,7 +257,7 @@
                 <td>${client.phone}</td>
                 <td>${client.service}</td>
                 <td>${new Date(client.date).toLocaleDateString("it-IT")}</td>
-                <td>${locationBtn}</td>
+                <td>${locationDisplay}</td>
                 <td>${new Date(client.created_at).toLocaleDateString("it-IT")}</td>
                 <td><button class="btn-delete" data-client-id="${client.id}">Elimina</button></td>
               </tr>
