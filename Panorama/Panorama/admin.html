@@ -245,9 +245,15 @@
               '<tr><td colspan="8" style="text-align: center;">Nessun cliente registrato</td></tr>';
           } else {
             data.clients.forEach((client) => {
-              // ✅ ONLY CHANGE: show lat,lng if both exist — else empty string
-              const locationDisplay = client.locationLat && client.locationLng
-                ? `${client.locationLat.toFixed(6)}, ${client.locationLng.toFixed(6)}`
+              // ✅ FIXED FOR GOOGLE MAPS: handles "0", "", null, numbers, strings
+              const lat = parseFloat(client.locationLat);
+              const lng = parseFloat(client.locationLng);
+              const hasValidCoords = 
+                !isNaN(lat) && Math.abs(lat) > 1e-6 &&
+                !isNaN(lng) && Math.abs(lng) > 1e-6;
+
+              const locationDisplay = hasValidCoords
+                ? `${lat.toFixed(6)}, ${lng.toFixed(6)}`
                 : "";
 
               const row = `
@@ -261,12 +267,11 @@
                 <td>${new Date(client.created_at).toLocaleDateString("it-IT")}</td>
                 <td><button class="btn-delete" data-client-id="${client.id}">Elimina</button></td>
               </tr>
-            `;
+              `;
               tbody.innerHTML += row;
             });
           }
 
-          // Add event listeners to delete buttons
           document.querySelectorAll(".btn-delete").forEach((btn) => {
             btn.addEventListener("click", () => {
               const clientId = btn.getAttribute("data-client-id");
@@ -274,6 +279,7 @@
             });
           });
         } catch (err) {
+          console.error("Errore caricamento clienti:", err);
           document.getElementById("clientsBody").innerHTML =
             '<tr><td colspan="8" style="text-align: center; color: red;">Errore nel caricamento dati</td></tr>';
         }
