@@ -244,11 +244,14 @@
             tbody.innerHTML =
               '<tr><td colspan="8" style="text-align: center;">Nessun cliente registrato</td></tr>';
           } else {
-            data.clients.forEach((client) => {
-              const hasLocation = client.locationLat && client.locationLng;
-              const locationBtn = hasLocation
-                ? `<button class="location-btn" onclick="showLocationOnMap(${client.locationLat}, ${client.locationLng}, '${client.name}')">📍 Vedi mappa</button>`
-                : '<span style="color: #999;">Lat: ${parseFloat(client.locationLat)} Lng: ${parseFloat(client.locationLng)}</span>';
+            scriptdata.clients.forEach((client) => {
+              const locationBtn = `
+              <span>
+                Lat: ${parseFloat(client.locationLat)} 
+                Lng: ${parseFloat(client.locationLng)}
+              </span>
+              `;
+
 
               const row = `
               <tr>
