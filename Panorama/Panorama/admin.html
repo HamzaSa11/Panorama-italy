@@ -244,14 +244,6 @@
             tbody.innerHTML =
               '<tr><td colspan="8" style="text-align: center;">Nessun cliente registrato</td></tr>';
           } else {
-            if (data.clients.length === 0) {
-            tbody.innerHTML =
-              '<tr><td colspan="8" style="text-align: center;">Nessun cliente registrato</td></tr>';
-          } else {
-            if (data.clients.length === 0) {
-            tbody.innerHTML =
-              '<tr><td colspan="8" style="text-align: center;">Nessun cliente registrato</td></tr>';
-          } else {
             data.clients.forEach((client) => {
               const hasLocation = client.locationLat && client.locationLng;
               const locationBtn = hasLocation
@@ -273,6 +265,7 @@
               tbody.innerHTML += row;
             });
           }
+
           // Add event listeners to delete buttons
           document.querySelectorAll(".btn-delete").forEach((btn) => {
             btn.addEventListener("click", () => {
