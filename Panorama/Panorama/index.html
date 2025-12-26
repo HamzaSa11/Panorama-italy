@@ -5,8 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>PANORAMA – Impresa di Pulizie</title>
     <link rel="stylesheet" href="styles.css" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script
+      async
+      defer
+      src="https://maps.googleapis.com/maps/api/js?loading=async"
+    ></script>
   </head>
   <body>
     <nav class="nav">
@@ -167,51 +170,56 @@
     <script src="script.js"></script>
     <script>
       function initMap() {
-        const location = [46.4983, 11.3548];
+        const location = { lat: 46.4983, lng: 11.3548 };
         const mapEl = document.getElementById("map");
         if (!mapEl) return;
-        
-        const map = L.map('map').setView(location, 15);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
-
-        L.marker(location).addTo(map)
-          .bindPopup("PANORAMA - Via C. Augusta 32/2, Bolzano")
-          .openPopup();
+        const map = new google.maps.Map(mapEl, {
+          zoom: 15,
+          center: location,
+        });
+        new google.maps.Marker({
+          position: location,
+          map: map,
+          title: "PANORAMA - Via C. Augusta 32/2, Bolzano",
+        });
       }
-      initMap();
+      setTimeout(initMap, 500);
 
       function initBookingMap() {
-        const bolzanoLocation = [46.4983, 11.3548];
+        const bolzanoLocation = { lat: 46.4983, lng: 11.3548 };
         const bookingMapEl = document.getElementById("bookingMap");
         if (!bookingMapEl) return;
 
-        const bookingMap = L.map('bookingMap').setView(bolzanoLocation, 13);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(bookingMap);
+        const bookingMap = new google.maps.Map(bookingMapEl, {
+          zoom: 13,
+          center: bolzanoLocation,
+        });
 
         let selectedMarker = null;
 
-        bookingMap.on("click", (e) => {
-          if (selectedMarker) bookingMap.removeLayer(selectedMarker);
+        bookingMap.addListener("click", (e) => {
+          if (selectedMarker) selectedMarker.setMap(null);
 
-          const position = e.latlng;
-          selectedMarker = L.marker(position).addTo(bookingMap);
+          const position = e.latLng;
+          selectedMarker = new google.maps.Marker({
+            position: position,
+            map: bookingMap,
+            title: "Luogo selezionato",
+            animation: google.maps.Animation.DROP,
+          });
 
-          document.getElementById("locationLat").value = position.lat;
-          document.getElementById("locationLng").value = position.lng;
+          document.getElementById("locationLat").value = position.lat();
+          document.getElementById("locationLng").value = position.lng();
 
           const displayEl = document.getElementById("locationDisplay");
-          displayEl.textContent = `✓ Posizione selezionata: ${position.lat.toFixed(4)}, ${position.lng.toFixed(4)}`;
+          displayEl.textContent = `✓ Posizione selezionata: ${position.lat().toFixed(4)}, ${position.lng().toFixed(4)}`;
           displayEl.style.color = "#28a745";
         });
 
         window.bookingMap = bookingMap;
       }
 
-      initBookingMap();
+      setTimeout(initBookingMap, 500);
     </script>
   </body>
 </html>
