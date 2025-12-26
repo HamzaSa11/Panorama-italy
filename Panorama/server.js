@@ -12,7 +12,7 @@ app.use((req, res, next) => {
   res.setHeader('X-Frame-Options', 'SAMEORIGIN');
   res.setHeader('X-XSS-Protection', '1; mode=block');
   res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
-  res.setHeader('Content-Security-Policy', "default-src 'self' https://unpkg.com https://*.tile.openstreetmap.org; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline' https://unpkg.com; img-src 'self' https: data:; font-src 'self' data:");
+  res.setHeader('Content-Security-Policy', "default-src 'self' https://unpkg.com https://*.tile.openstreetmap.org; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline' https://unpkg.com; img-src 'self' https: data:; font-src 'self' data:; connect-src 'self' https://*.tile.openstreetmap.org https://unpkg.com;");
   next();
 });
 
