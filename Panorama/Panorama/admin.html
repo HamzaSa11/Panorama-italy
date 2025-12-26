@@ -5,8 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Admin - PANORAMA</title>
     <link rel="stylesheet" href="styles.css" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script
+      async
+      defer
+      src="https://maps.googleapis.com/maps/api/js?loading=async"
+    ></script>
     <style>
       .clients-table {
         width: 100%;
@@ -168,23 +171,27 @@
 
         setTimeout(() => {
           if (currentLocationMap) {
-            currentLocationMap.setView([lat, lng], 15);
+            currentLocationMap.setCenter({ lat, lng });
+            currentLocationMap.setZoom(15);
             // Clear old markers
-            currentLocationMap.eachLayer((layer) => {
-              if (layer instanceof L.Marker) {
-                currentLocationMap.removeLayer(layer);
-              }
-            });
+            document
+              .querySelectorAll('[role="button"][aria-label*="marker"]')
+              .forEach((el) => el.remove());
           } else {
-            currentLocationMap = L.map('locationModal').setView([lat, lng], 15);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-              attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            }).addTo(currentLocationMap);
+            currentLocationMap = new google.maps.Map(
+              document.getElementById("locationModal"),
+              {
+                zoom: 15,
+                center: { lat, lng },
+              },
+            );
           }
 
-          L.marker([lat, lng]).addTo(currentLocationMap)
-            .bindPopup(`Prenotazione per ${clientName}`)
-            .openPopup();
+          new google.maps.Marker({
+            position: { lat, lng },
+            map: currentLocationMap,
+            title: `Prenotazione per ${clientName}`,
+          });
         }, 100);
       }
 
