@@ -27,7 +27,7 @@ main{flex:1}
 .nav{
   background:#fff;
   border-bottom:1px solid #e6e6e6;
-  position:sticky;
+  position:flex;
   top:0;
   z-index:20;
 }
