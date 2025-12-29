@@ -263,7 +263,7 @@
                 <td>${client.phone}</td>
                 <td>${client.service}</td>
                 <td>${new Date(client.date).toLocaleDateString("it-IT")}</td>
-                <td>${locationDisplay}</td>
+                <td><a href="https://www.google.com/maps?q=LATITUDE,LONGITUDE" target="_blank" rel="noopener noreferrer">${locationDisplay}</a></td>
                 <td>${new Date(client.created_at).toLocaleDateString("it-IT")}</td>
                 <td><button class="btn-delete" data-client-id="${client.id}">Elimina</button></td>
               </tr>
