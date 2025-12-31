@@ -27,9 +27,9 @@ main{flex:1}
 .nav{
   background:#fff;
   border-bottom:1px solid #e6e6e6;
-  position:flex;
+  position:sticky;
   top:0;
-  z-index:20;
+  z-index:100;
 }
 .nav-inner{
   display:flex;
@@ -227,9 +227,10 @@ main{flex:1}
 .site-footer{
   background:#222;
   color:#fff;
-  padding:20px 0;
+  padding:40px 0;
   margin-top:auto;
   text-align:center;
+  width:100%;
 }
 .site-footer p{margin:8px 0}
 .glary-link{
@@ -268,13 +269,16 @@ main{flex:1}
   .nav-links.show{
     display:flex;
     flex-direction:column;
-    position:absolute;
-    top:60px;
+    position:fixed;
+    top:64px;
     left:0;
     right:0;
+    bottom:0;
     background:white;
-    padding:12px;
-    box-shadow:0 4px 12px rgba(0,0,0,0.1);
+    padding:20px;
+    z-index:1000;
+    overflow-y:auto;
   }
   .burger{display:block}
+  .nav-inner{padding:10px 16px}
 }
