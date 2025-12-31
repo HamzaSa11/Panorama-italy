@@ -7,31 +7,91 @@
     <link rel="stylesheet" href="styles.css" />
     <style>
       .services-list {
-        display: flex;
-        flex-direction: column;
-        gap: 3rem;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
         padding-bottom: 3rem;
       }
 
-      .service.card {
-        width: 100%;
-        max-width: 800px;
-        height: 450px;
-        margin: 0 auto;
-        background-size: contain;
-        background-position: center;
-        background-repeat: no-repeat;
+      .service-card {
+        position: relative;
+        height: 400px;
         border-radius: 20px;
+        overflow: hidden;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        cursor: pointer;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
         background-color: #fff;
       }
-      
+
+      .service-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+      }
+
+      .service-image {
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        transition: transform 0.5s ease;
+      }
+
+      .service-card:hover .service-image {
+        transform: scale(1.05);
+      }
+
+      .service-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+        padding: 2rem;
+        color: white;
+        transition: transform 0.3s ease;
+      }
+
+      .service-card h3 {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 700;
+      }
+
+      .service-description {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(22, 139, 135, 0.95);
+        color: white;
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+        z-index: 2;
+      }
+
+      .service-card.active .service-description {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .service-description p {
+        font-size: 1.1rem;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+      }
+
       @media (max-width: 768px) {
-        .service.card {
-          height: 250px;
+        .service-card {
+          height: 300px;
         }
       }
     </style>
@@ -43,8 +103,8 @@
           <img src="logo.png.jpeg" alt="PANORAMA logo" class="logo" />
           <span class="brand-name">PANORAMA</span>
         </a>
-        <button id="burger2" class="burger" aria-label="menu">☰</button>
-        <ul class="nav-links" id="navLinks2">
+        <button id="burger" class="burger" aria-label="menu">☰</button>
+        <ul class="nav-links" id="navLinks">
           <li><a href="index.html">Home</a></li>
           <li><a href="services.html" class="active">Servizi</a></li>
           <li><a href="contact.html">Contatti</a></li>
@@ -62,24 +122,52 @@
       </header>
 
       <section class="services-list">
-        <article class="service card" style="background-image: url('aziase.jpeg');">
-          <h3 class="visually-hidden" style="opacity: 0;">Pulizie aziendali</h3>
-          <p class="visually-hidden" style="opacity: 0;">Servizi programmati per uffici, magazzini e strutture commerciali.</p>
+        <article class="service-card" onclick="this.classList.toggle('active')">
+          <div class="service-image" style="background-image: url('aziase.jpeg');"></div>
+          <div class="service-overlay">
+            <h3>Pulizie aziendali</h3>
+          </div>
+          <div class="service-description">
+            <h3>Pulizie aziendali</h3>
+            <p>Servizi programmati per uffici, magazzini e strutture commerciali. Garantiamo un ambiente di lavoro pulito e professionale.</p>
+            <a href="index.html#booking" class="btn" style="background: white; color: var(--teal);">Prenota ora</a>
+          </div>
         </article>
 
-        <article class="service card" style="background-image: url('privates.jpeg');">
-          <h3 class="visually-hidden" style="opacity: 0;">Pulizie private</h3>
-          <p class="visually-hidden" style="opacity: 0;">Pulizie domestiche accurate e su misura per la tua casa.</p>
+        <article class="service-card" onclick="this.classList.toggle('active')">
+          <div class="service-image" style="background-image: url('privates.jpeg');"></div>
+          <div class="service-overlay">
+            <h3>Pulizie private</h3>
+          </div>
+          <div class="service-description">
+            <h3>Pulizie private</h3>
+            <p>Pulizie domestiche accurate e su misura per la tua casa. Affidati a noi per la cura del tuo spazio personale.</p>
+            <a href="index.html#booking" class="btn" style="background: white; color: var(--teal);">Prenota ora</a>
+          </div>
         </article>
 
-        <article class="service card" style="background-image: url('sagamberose.jpeg');">
-          <h3 class="visually-hidden" style="opacity: 0;">Sgombero cantine</h3>
-          <p class="visually-hidden" style="opacity: 0;">Rimozione rifiuti e smaltimento responsabile.</p>
+        <article class="service-card" onclick="this.classList.toggle('active')">
+          <div class="service-image" style="background-image: url('sagamberose.jpeg');"></div>
+          <div class="service-overlay">
+            <h3>Sgombero cantine</h3>
+          </div>
+          <div class="service-description">
+            <h3>Sgombero cantine</h3>
+            <p>Rimozione rifiuti e smaltimento responsabile. Liberiamo i tuoi spazi in modo rapido ed efficiente.</p>
+            <a href="index.html#booking" class="btn" style="background: white; color: var(--teal);">Prenota ora</a>
+          </div>
         </article>
 
-        <article class="service card" style="background-image: url('vertratrese.jpeg');">
-          <h3 class="visually-hidden" style="opacity: 0;">Pulizia vetrate</h3>
-          <p class="visually-hidden" style="opacity: 0;">Vetrate e facciate pulite per una migliore immagine aziendale.</p>
+        <article class="service-card" onclick="this.classList.toggle('active')">
+          <div class="service-image" style="background-image: url('vertratrese.jpeg');"></div>
+          <div class="service-overlay">
+            <h3>Pulizia vetrate</h3>
+          </div>
+          <div class="service-description">
+            <h3>Pulizia vetrate</h3>
+            <p>Vetrate e facciate pulite per una migliore immagine aziendale. Utilizziamo tecniche all'avanguardia per risultati brillanti.</p>
+            <a href="index.html#booking" class="btn" style="background: white; color: var(--teal);">Prenota ora</a>
+          </div>
         </article>
       </section>
     </main>

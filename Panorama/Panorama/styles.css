@@ -120,7 +120,7 @@ main{flex:1}
 .features .card h3{color:var(--accent)}
 .contact-preview{display:flex; justify-content:space-between; align-items:center; gap:16px}
 .contact-preview .btn-outline{background:none; border:2px solid var(--teal); color:var(--teal); padding:8px 14px; border-radius:8px; text-decoration:none}
-.services-list{display:grid; grid-template-columns:repeat(2,1fr); gap:12px}
+.services-list{display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:2rem}
 .contact-form{display:grid; grid-template-columns:1fr 320px; gap:18px; align-items:start}
 .contact-form form label{display:block; margin-top:10px; font-weight:600}
 .contact-form input, .contact-form textarea{
