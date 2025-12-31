@@ -6,6 +6,16 @@
   --container:1100px;
   --radius:10px;
 }
+html, body {
+  width: 100%;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+* {
+  box-sizing: border-box;
+}
 body {
   margin: 0;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
@@ -23,6 +33,7 @@ body {
   margin: 0 auto;
   padding: 0 16px;
   width: 100%;
+  box-sizing: border-box;
 }
 .nav{
   background:#fff;
