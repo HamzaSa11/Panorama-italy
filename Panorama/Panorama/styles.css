@@ -30,12 +30,15 @@ body {
   position:sticky;
   top:0;
   z-index:100;
+  width: 100%;
 }
 .nav-inner{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  padding:10px 0;
+  padding:10px 16px;
+  max-width: var(--container);
+  margin: 0 auto;
 }
 .brand{
   display:flex;
@@ -235,10 +238,13 @@ body {
 .site-footer{
   background:#222;
   color:#fff;
-  padding:40px 0;
+  padding:40px 16px;
   margin-top:auto;
   text-align:center;
   width:100%;
+}
+.site-footer .container {
+  padding: 0;
 }
 .site-footer p{margin:8px 0}
 .glary-link{
