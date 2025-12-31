@@ -15,7 +15,7 @@
 
       .service-card {
         position: relative;
-        height: 550px;
+        height: 500px;
         border-radius: 20px;
         overflow: hidden;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
@@ -24,29 +24,18 @@
         background-color: #fff;
       }
 
-      .service-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
-      }
-
-      .service-card.large {
-        grid-column: span 2;
-        height: 650px;
-      }
-
       .service-image {
         width: 100%;
         height: 100%;
-        background-size: cover;
+        background-size: contain;
         background-repeat: no-repeat;
         background-position: center;
         transition: transform 0.5s ease;
       }
 
-      @media (max-width: 992px) {
-        .service-card.large {
-          grid-column: span 1;
-          height: 550px;
+      @media (max-width: 768px) {
+        .service-card {
+          height: 350px;
         }
       }
 
@@ -135,7 +124,7 @@
       </header>
 
       <section class="services-list">
-        <article class="service-card large" onclick="this.classList.toggle('active')">
+        <article class="service-card" onclick="this.classList.toggle('active')">
           <div class="service-image" style="background-image: url('aziase.jpeg');"></div>
           <div class="service-overlay">
             <h3>Pulizie aziendali</h3>
@@ -147,7 +136,7 @@
           </div>
         </article>
 
-        <article class="service-card large" onclick="this.classList.toggle('active')">
+        <article class="service-card" onclick="this.classList.toggle('active')">
           <div class="service-image" style="background-image: url('privates.jpeg');"></div>
           <div class="service-overlay">
             <h3>Pulizie private</h3>
@@ -159,7 +148,7 @@
           </div>
         </article>
 
-        <article class="service-card large" onclick="this.classList.toggle('active')">
+        <article class="service-card" onclick="this.classList.toggle('active')">
           <div class="service-image" style="background-image: url('sagamberose.jpeg');"></div>
           <div class="service-overlay">
             <h3>Sgombero cantine</h3>
