@@ -7,14 +7,17 @@
     <link rel="stylesheet" href="styles.css" />
     <style>
       .services-list {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 3rem;
         padding-bottom: 3rem;
+        align-items: center;
       }
 
       .service-card {
         position: relative;
+        width: 100%;
+        max-width: 800px;
         height: 550px;
         border-radius: 20px;
         overflow: hidden;
