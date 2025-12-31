@@ -43,23 +43,28 @@
     <div class="card">
       <div class="dashboard-header">
         <h2>Messaggi da Contatti</h2>
-        <button id="logoutBtn" class="btn-logout">Esci</button>
+        <div class="header-buttons">
+          <a href="admin.html" class="btn-messages">👥 Pannello Clienti</a>
+          <button id="logoutBtn" class="btn-logout">Esci</button>
+        </div>
       </div>
-      <table class="clients-table">
-        <thead>
-          <tr>
-            <th>Nome</th>
-            <th>Email</th>
-            <th>Telefono</th>
-            <th>Messaggio</th>
-            <th>Data</th>
-            <th>Azione</th>
-          </tr>
-        </thead>
-        <tbody id="messagesBody">
-          <tr><td colspan="6" style="text-align: center;">Caricamento dati...</td></tr>
-        </tbody>
-      </table>
+      <div class="clients-table-wrapper">
+        <table class="clients-table">
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Email</th>
+              <th>Telefono</th>
+              <th>Messaggio</th>
+              <th>Data</th>
+              <th>Azione</th>
+            </tr>
+          </thead>
+          <tbody id="messagesBody">
+            <tr><td colspan="6" style="text-align: center;">Caricamento dati...</td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 
