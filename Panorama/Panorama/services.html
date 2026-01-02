@@ -36,33 +36,6 @@
         transition: transform 0.5s ease;
       }
 
-      @media (max-width: 768px) {
-        .service-card {
-          max-width: 100%;
-          aspect-ratio: 16 / 11;
-        }
-        .service-description {
-          padding: 1rem;
-        }
-        .service-description h3 {
-          font-size: 0.55rem;
-          margin-bottom: 0.1rem;
-        }
-        .service-description p {
-          font-size: 0.4rem;
-          line-height: 1;
-          margin-bottom: 0.2rem;
-        }
-        .service-description .btn {
-          padding: 0.05rem 0.15rem;
-          font-size: 0.4rem;
-        }
-      }
-
-      .service-card:hover .service-image {
-        transform: scale(1.05);
-      }
-
       .service-description {
         position: absolute;
         top: 0;
@@ -74,13 +47,15 @@
         padding: 2rem;
         display: flex;
         flex-direction: column;
-        justify-content: center;
+        justify-content: flex-start;
         align-items: center;
         text-align: center;
         opacity: 0;
         visibility: hidden;
         transition: opacity 0.3s ease, visibility 0.3s ease;
         z-index: 2;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
       }
 
       .service-card.active .service-description {
@@ -89,14 +64,43 @@
       }
 
       .service-description h3 {
-        margin-top: 0;
+        margin-top: 1rem;
         margin-bottom: 1rem;
+        flex-shrink: 0;
       }
 
       .service-description p {
         font-size: 1.1rem;
         line-height: 1.6;
         margin-bottom: 1.5rem;
+      }
+
+      @media (max-width: 768px) {
+        .service-card {
+          max-width: 100%;
+          aspect-ratio: 16 / 11;
+        }
+        .service-description {
+          padding: 1.5rem;
+          justify-content: flex-start;
+        }
+        .service-description h3 {
+          font-size: 1.3rem;
+          margin-top: 0.5rem;
+          margin-bottom: 0.8rem;
+          flex-shrink: 0;
+        }
+        .service-description p {
+          font-size: 1rem;
+          line-height: 1.4;
+          margin-bottom: 1.2rem;
+        }
+        .service-description .btn {
+          padding: 0.6rem 1.2rem;
+          font-size: 1rem;
+          margin-bottom: 1rem;
+          flex-shrink: 0;
+        }
       }
     </style>
   </head>
